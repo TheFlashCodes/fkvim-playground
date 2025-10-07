@@ -22,7 +22,12 @@ export const Navbar = () => {
       <nav className="sticky top-0 z-50 w-full border-b border-terminal-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <a 
+            href="https://fkvim.netlify.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
             <div className="w-10 h-10 rounded-lg bg-gradient-fkvim flex items-center justify-center shadow-glow">
               <TerminalIcon className="w-5 h-5 text-white" />
             </div>
@@ -30,7 +35,7 @@ export const Navbar = () => {
               <h1 className="text-xl font-bold bg-gradient-fkvim bg-clip-text text-transparent">FKvim</h1>
               <p className="text-xs text-muted-foreground">Interactive Demo</p>
             </div>
-          </div>
+          </a>
 
           {/* Search */}
           <button

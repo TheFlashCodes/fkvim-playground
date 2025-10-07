@@ -60,9 +60,11 @@ export default {
       backgroundImage: {
         "gradient-fkvim": "var(--gradient-fkvim)",
         "gradient-hero": "var(--gradient-hero)",
+        "gradient-radial-glow": "var(--gradient-radial-glow)",
       },
       boxShadow: {
         glow: "var(--shadow-glow)",
+        "glow-lg": "var(--shadow-glow-lg)",
         terminal: "var(--shadow-terminal)",
       },
       fontFamily: {
