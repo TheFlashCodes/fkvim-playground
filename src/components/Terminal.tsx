@@ -11,6 +11,9 @@ export const Terminal = () => {
   const [state, setState] = useState<TerminalState>("welcome");
   const [input, setInput] = useState("");
   const [showCursor, setShowCursor] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [loadingDots, setLoadingDots] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -19,6 +22,19 @@ export const Terminal = () => {
     }, 530);
     return () => clearInterval(interval);
   }, []);
+
+  // Animated loading dots
+  useEffect(() => {
+    if (isLoading) {
+      const interval = setInterval(() => {
+        setLoadingDots((prev) => {
+          if (prev.length >= 4) return "";
+          return prev + ".";
+        });
+      }, 300);
+      return () => clearInterval(interval);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -72,19 +88,60 @@ export const Terminal = () => {
     e.preventDefault();
     const cmd = input.trim().toLowerCase();
     if (["fkvim", "nvim", "neovim"].includes(cmd)) {
-      setState("dashboard");
+      setIsLoading(true);
+      setLoadingDots("");
       setInput("");
+      
+      // Simulate loading time
+      setTimeout(() => {
+        setIsLoading(false);
+        setShowSuccess(true);
+        
+        // Show success message then transition to dashboard
+        setTimeout(() => {
+          setShowSuccess(false);
+          setState("dashboard");
+        }, 800);
+      }, 1500);
     }
   };
 
   const renderContent = () => {
+    // Loading state
+    if (isLoading) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full space-y-4">
+          <div className="flex items-center gap-2 text-primary font-mono text-lg">
+            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <span>Opening FKvim{loadingDots}</span>
+          </div>
+        </div>
+      );
+    }
+
+    // Success state
+    if (showSuccess) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full space-y-4">
+          <div className="flex items-center gap-2 text-success font-mono text-lg animate-scale-in">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Successfully opened FKvim</span>
+          </div>
+        </div>
+      );
+    }
+
     switch (state) {
       case "welcome":
         return (
           <div className="space-y-4">
             <div className="text-terminal-text font-mono text-sm">
-              <div className="text-success">→</div>
-              <div className="mt-2">Welcome to FKvim Interactive Demo</div>
+              <div className="flex items-center gap-2">
+                <span className="text-success">→</span>
+                <span>Welcome to FKvim Interactive Demo</span>
+              </div>
               <div className="mt-4 text-muted-foreground">
                 Type <span className="text-primary font-semibold">fkvim</span>,{" "}
                 <span className="text-primary font-semibold">nvim</span>, or{" "}
@@ -217,7 +274,8 @@ export const Terminal = () => {
       {/* Terminal Content */}
       <div className={cn(
         "flex flex-col",
-        state === "welcome" || state === "quit" ? "p-6 min-h-[600px]" : "min-h-[600px]"
+        (state === "welcome" || state === "quit") ? "p-6 min-h-[600px]" : "min-h-[600px]",
+        (isLoading || showSuccess) && "p-6"
       )}>{renderContent()}</div>
     </div>
   );
