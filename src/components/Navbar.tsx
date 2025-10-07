@@ -60,7 +60,7 @@ export const Navbar = () => {
               >
                 {item.label}
                 {item.isNew && (
-                  <Badge variant="default" className="bg-gradient-fkvim text-white text-xs px-1.5 py-0.5 h-5">
+                  <Badge variant="default" className="bg-gradient-fkvim text-white text-xs px-1.5 py-0.5 h-5 animate-pulse">
                     NEW
                   </Badge>
                 )}
