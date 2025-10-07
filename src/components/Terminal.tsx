@@ -14,7 +14,25 @@ export const Terminal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [loadingDots, setLoadingDots] = useState("");
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Preload all images
+  useEffect(() => {
+    const images = [dashboardImg, editorImg, explorerImg, finderImg];
+    let loadedCount = 0;
+    
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === images.length) {
+          setImagesLoaded(true);
+        }
+      };
+    });
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -92,17 +110,33 @@ export const Terminal = () => {
       setLoadingDots("");
       setInput("");
       
-      // Simulate loading time
+      // Wait for images to load
+      const checkImagesLoaded = setInterval(() => {
+        if (imagesLoaded) {
+          clearInterval(checkImagesLoaded);
+          setIsLoading(false);
+          setShowSuccess(true);
+          
+          // Show success message then transition to dashboard
+          setTimeout(() => {
+            setShowSuccess(false);
+            setState("dashboard");
+          }, 800);
+        }
+      }, 100);
+      
+      // Timeout after 10 seconds
       setTimeout(() => {
-        setIsLoading(false);
-        setShowSuccess(true);
-        
-        // Show success message then transition to dashboard
-        setTimeout(() => {
-          setShowSuccess(false);
-          setState("dashboard");
-        }, 800);
-      }, 1500);
+        clearInterval(checkImagesLoaded);
+        if (isLoading) {
+          setIsLoading(false);
+          setShowSuccess(true);
+          setTimeout(() => {
+            setShowSuccess(false);
+            setState("dashboard");
+          }, 800);
+        }
+      }, 10000);
     }
   };
 
@@ -110,9 +144,24 @@ export const Terminal = () => {
     // Loading state
     if (isLoading) {
       return (
-        <div className="flex flex-col items-center justify-center h-full space-y-4">
-          <div className="flex items-center gap-2 text-primary font-mono text-lg">
-            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="space-y-4">
+          <div className="text-terminal-text font-mono text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-success">→</span>
+              <span>Welcome to FKvim Interactive Demo</span>
+            </div>
+            <div className="mt-4 text-muted-foreground">
+              Type <span className="text-primary font-semibold">fkvim</span>,{" "}
+              <span className="text-primary font-semibold">nvim</span>, or{" "}
+              <span className="text-primary font-semibold">neovim</span> to get started
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mt-6">
+            <span className="text-success">→</span>
+            <span className="text-terminal-text font-mono">fkvim</span>
+          </div>
+          <div className="flex items-center gap-2 mt-4 text-primary font-mono">
+            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             <span>Opening FKvim{loadingDots}</span>
           </div>
         </div>
@@ -122,9 +171,24 @@ export const Terminal = () => {
     // Success state
     if (showSuccess) {
       return (
-        <div className="flex flex-col items-center justify-center h-full space-y-4">
-          <div className="flex items-center gap-2 text-success font-mono text-lg animate-scale-in">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="space-y-4">
+          <div className="text-terminal-text font-mono text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-success">→</span>
+              <span>Welcome to FKvim Interactive Demo</span>
+            </div>
+            <div className="mt-4 text-muted-foreground">
+              Type <span className="text-primary font-semibold">fkvim</span>,{" "}
+              <span className="text-primary font-semibold">nvim</span>, or{" "}
+              <span className="text-primary font-semibold">neovim</span> to get started
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mt-6">
+            <span className="text-success">→</span>
+            <span className="text-terminal-text font-mono">fkvim</span>
+          </div>
+          <div className="flex items-center gap-2 mt-4 text-success font-mono animate-fade-in">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             <span>Successfully opened FKvim</span>
@@ -195,7 +259,7 @@ export const Terminal = () => {
         );
       case "dashboard":
         return (
-          <div className="relative group h-full w-full">
+          <div className="relative group h-full w-full animate-fade-in">
             <img src={dashboardImg} alt="FKvim Dashboard" className="w-full h-full object-cover" />
             <div className="absolute bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm p-3 border-t border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground">
@@ -207,8 +271,8 @@ export const Terminal = () => {
         );
       case "editor":
         return (
-          <div className="relative group h-full w-full">
-            <img src={editorImg} alt="FKvim Editor" className="w-full h-full object-cover" />
+          <div className="relative group h-full w-full animate-fade-in">
+            <img src={editorImg} alt="FKvim Editor" className="w-full h-full object-cover transition-opacity duration-300" />
             <div className="absolute bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm p-3 border-t border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground space-y-1">
                 <div>
@@ -224,8 +288,8 @@ export const Terminal = () => {
         );
       case "explorer":
         return (
-          <div className="relative group h-full w-full">
-            <img src={explorerImg} alt="FKvim Explorer" className="w-full h-full object-cover" />
+          <div className="relative group h-full w-full animate-fade-in">
+            <img src={explorerImg} alt="FKvim Explorer" className="w-full h-full object-cover transition-opacity duration-300" />
             <div className="absolute bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm p-3 border-t border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground">
                 <kbd className="px-2 py-1 bg-secondary rounded text-primary">Space</kbd> +{" "}
@@ -237,8 +301,8 @@ export const Terminal = () => {
         );
       case "finder":
         return (
-          <div className="relative group h-full w-full">
-            <img src={finderImg} alt="FKvim Finder" className="w-full h-full object-cover" />
+          <div className="relative group h-full w-full animate-fade-in">
+            <img src={finderImg} alt="FKvim Finder" className="w-full h-full object-cover transition-opacity duration-300" />
             <div className="absolute bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm p-3 border-t border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground">
                 <kbd className="px-2 py-1 bg-secondary rounded text-primary">Space</kbd> +{" "}
@@ -274,8 +338,7 @@ export const Terminal = () => {
       {/* Terminal Content */}
       <div className={cn(
         "flex flex-col",
-        (state === "welcome" || state === "quit") ? "p-6 min-h-[600px]" : "min-h-[600px]",
-        (isLoading || showSuccess) && "p-6"
+        (state === "welcome" || state === "quit" || isLoading || showSuccess) ? "p-6 min-h-[600px]" : "min-h-[600px]"
       )}>{renderContent()}</div>
     </div>
   );
