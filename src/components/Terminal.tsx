@@ -14,25 +14,7 @@ export const Terminal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [loadingDots, setLoadingDots] = useState("");
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Preload all images
-  useEffect(() => {
-    const images = [dashboardImg, editorImg, explorerImg, finderImg];
-    let loadedCount = 0;
-    
-    images.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount === images.length) {
-          setImagesLoaded(true);
-        }
-      };
-    });
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -110,33 +92,17 @@ export const Terminal = () => {
       setLoadingDots("");
       setInput("");
       
-      // Wait for images to load
-      const checkImagesLoaded = setInterval(() => {
-        if (imagesLoaded) {
-          clearInterval(checkImagesLoaded);
-          setIsLoading(false);
-          setShowSuccess(true);
-          
-          // Show success message then transition to dashboard
-          setTimeout(() => {
-            setShowSuccess(false);
-            setState("dashboard");
-          }, 800);
-        }
-      }, 100);
-      
-      // Timeout after 10 seconds
+      // Show loading animation briefly
       setTimeout(() => {
-        clearInterval(checkImagesLoaded);
-        if (isLoading) {
-          setIsLoading(false);
-          setShowSuccess(true);
-          setTimeout(() => {
-            setShowSuccess(false);
-            setState("dashboard");
-          }, 800);
-        }
-      }, 10000);
+        setIsLoading(false);
+        setShowSuccess(true);
+        
+        // Show success message then transition to dashboard
+        setTimeout(() => {
+          setShowSuccess(false);
+          setState("dashboard");
+        }, 600);
+      }, 1200);
     }
   };
 
