@@ -5,7 +5,7 @@ import editorImg from "@/assets/fkvim-editor.png";
 import explorerImg from "@/assets/fkvim-explorer.png";
 import finderImg from "@/assets/fkvim-finder.png";
 
-type TerminalState = "welcome" | "dashboard" | "editor" | "explorer" | "finder";
+type TerminalState = "welcome" | "quit" | "dashboard" | "editor" | "explorer" | "finder";
 
 export const Terminal = () => {
   const [state, setState] = useState<TerminalState>("welcome");
@@ -22,22 +22,39 @@ export const Terminal = () => {
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      // Handle :q command
+      if (e.key === ":" && (state === "editor" || state === "dashboard" || state === "explorer" || state === "finder")) {
+        e.preventDefault();
+        const handleQ = (ev: KeyboardEvent) => {
+          ev.preventDefault();
+          if (ev.key === "q") {
+            if (state === "explorer") {
+              setState("editor");
+            } else if (state === "finder") {
+              setState("editor");
+            } else {
+              setState("quit");
+            }
+          }
+          window.removeEventListener("keydown", handleQ);
+        };
+        window.addEventListener("keydown", handleQ);
+        setTimeout(() => window.removeEventListener("keydown", handleQ), 1000);
+        return;
+      }
+
       if (state === "dashboard" && e.key === "i") {
         setState("editor");
       } else if (state === "editor" || state === "explorer" || state === "finder") {
-        if (e.key === "Escape") {
-          setState("dashboard");
-        } else if (e.key === "e" && e.code === "KeyE" && (e.metaKey || e.ctrlKey)) {
-          e.preventDefault();
-        } else if (e.key === " ") {
+        if (e.key === " ") {
           e.preventDefault(); // Prevent page scroll
           // Wait for next key
           const handleSpace = (ev: KeyboardEvent) => {
             ev.preventDefault();
             if (ev.key === "e") {
-              setState("explorer");
+              setState(state === "explorer" ? "editor" : "explorer");
             } else if (ev.key === "/") {
-              setState("finder");
+              setState(state === "finder" ? "editor" : "finder");
             }
             window.removeEventListener("keydown", handleSpace);
           };
@@ -89,33 +106,58 @@ export const Terminal = () => {
             </form>
           </div>
         );
+      case "quit":
+        return (
+          <div className="space-y-4">
+            <div className="text-terminal-text font-mono text-sm">
+              <div className="text-success">→</div>
+              <div className="mt-2 text-success">FKvim quit successfully</div>
+              <div className="mt-4">Welcome to FKvim Interactive Demo</div>
+              <div className="mt-4 text-muted-foreground">
+                Type <span className="text-primary font-semibold">fkvim</span>,{" "}
+                <span className="text-primary font-semibold">nvim</span>, or{" "}
+                <span className="text-primary font-semibold">neovim</span> to get started
+              </div>
+            </div>
+            <form onSubmit={handleSubmit} className="flex items-center gap-2 mt-6">
+              <span className="text-success">→</span>
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="flex-1 bg-transparent border-none outline-none text-terminal-text font-mono"
+                autoFocus
+                spellCheck={false}
+              />
+              {showCursor && <span className="w-2 h-4 bg-terminal-cursor animate-pulse" />}
+            </form>
+          </div>
+        );
       case "dashboard":
         return (
-          <div className="relative group h-full">
-            <img src={dashboardImg} alt="FKvim Dashboard" className="w-full h-full object-cover rounded-lg" />
-            <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="relative group h-full w-full">
+            <img src={dashboardImg} alt="FKvim Dashboard" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm p-3 border-t border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground">
-                Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">i</kbd> to enter editor mode
+                Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">i</kbd> to enter editor • 
+                Type <kbd className="px-2 py-1 bg-secondary rounded text-primary">:q</kbd> to quit
               </div>
             </div>
           </div>
         );
       case "editor":
         return (
-          <div className="relative group h-full">
-            <img src={editorImg} alt="FKvim Editor" className="w-full h-full object-cover rounded-lg" />
-            <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="relative group h-full w-full">
+            <img src={editorImg} alt="FKvim Editor" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm p-3 border-t border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground space-y-1">
                 <div>
-                  Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">Space</kbd> +{" "}
-                  <kbd className="px-2 py-1 bg-secondary rounded text-primary">e</kbd> for file explorer
-                </div>
-                <div>
-                  Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">Space</kbd> +{" "}
-                  <kbd className="px-2 py-1 bg-secondary rounded text-primary">/</kbd> for fuzzy finder
-                </div>
-                <div>
-                  Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">Esc</kbd> to return
+                  <kbd className="px-2 py-1 bg-secondary rounded text-primary">Space</kbd> +{" "}
+                  <kbd className="px-2 py-1 bg-secondary rounded text-primary">e</kbd> for file explorer • 
+                  <kbd className="px-2 py-1 bg-secondary rounded text-primary ml-2">Space</kbd> +{" "}
+                  <kbd className="px-2 py-1 bg-secondary rounded text-primary">/</kbd> for fuzzy finder • 
+                  <kbd className="px-2 py-1 bg-secondary rounded text-primary ml-2">:q</kbd> to quit
                 </div>
               </div>
             </div>
@@ -123,22 +165,26 @@ export const Terminal = () => {
         );
       case "explorer":
         return (
-          <div className="relative group h-full">
-            <img src={explorerImg} alt="FKvim Explorer" className="w-full h-full object-cover rounded-lg" />
-            <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="relative group h-full w-full">
+            <img src={explorerImg} alt="FKvim Explorer" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm p-3 border-t border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground">
-                Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">Esc</kbd> to return to editor
+                <kbd className="px-2 py-1 bg-secondary rounded text-primary">Space</kbd> +{" "}
+                <kbd className="px-2 py-1 bg-secondary rounded text-primary">e</kbd> or{" "}
+                <kbd className="px-2 py-1 bg-secondary rounded text-primary">:q</kbd> to return to editor
               </div>
             </div>
           </div>
         );
       case "finder":
         return (
-          <div className="relative group h-full">
-            <img src={finderImg} alt="FKvim Finder" className="w-full h-full object-cover rounded-lg" />
-            <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="relative group h-full w-full">
+            <img src={finderImg} alt="FKvim Finder" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm p-3 border-t border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground">
-                Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">Esc</kbd> to return to editor
+                <kbd className="px-2 py-1 bg-secondary rounded text-primary">Space</kbd> +{" "}
+                <kbd className="px-2 py-1 bg-secondary rounded text-primary">/</kbd> or{" "}
+                <kbd className="px-2 py-1 bg-secondary rounded text-primary">:q</kbd> to return to editor
               </div>
             </div>
           </div>
@@ -167,7 +213,10 @@ export const Terminal = () => {
       </div>
 
       {/* Terminal Content */}
-      <div className="p-6 min-h-[600px] flex flex-col">{renderContent()}</div>
+      <div className={cn(
+        "flex flex-col",
+        state === "welcome" || state === "quit" ? "p-6 min-h-[600px]" : "min-h-[600px]"
+      )}>{renderContent()}</div>
     </div>
   );
 };
