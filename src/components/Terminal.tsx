@@ -30,8 +30,10 @@ export const Terminal = () => {
         } else if (e.key === "e" && e.code === "KeyE" && (e.metaKey || e.ctrlKey)) {
           e.preventDefault();
         } else if (e.key === " ") {
+          e.preventDefault(); // Prevent page scroll
           // Wait for next key
           const handleSpace = (ev: KeyboardEvent) => {
+            ev.preventDefault();
             if (ev.key === "e") {
               setState("explorer");
             } else if (ev.key === "/") {
@@ -89,9 +91,9 @@ export const Terminal = () => {
         );
       case "dashboard":
         return (
-          <div className="relative">
-            <img src={dashboardImg} alt="FKvim Dashboard" className="w-full rounded-lg" />
-            <div className="absolute bottom-4 left-4 right-4 bg-background/80 backdrop-blur-sm p-3 rounded-lg border border-terminal-border">
+          <div className="relative group h-full">
+            <img src={dashboardImg} alt="FKvim Dashboard" className="w-full h-full object-cover rounded-lg" />
+            <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground">
                 Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">i</kbd> to enter editor mode
               </div>
@@ -100,9 +102,9 @@ export const Terminal = () => {
         );
       case "editor":
         return (
-          <div className="relative">
-            <img src={editorImg} alt="FKvim Editor" className="w-full rounded-lg" />
-            <div className="absolute bottom-4 left-4 right-4 bg-background/80 backdrop-blur-sm p-3 rounded-lg border border-terminal-border">
+          <div className="relative group h-full">
+            <img src={editorImg} alt="FKvim Editor" className="w-full h-full object-cover rounded-lg" />
+            <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground space-y-1">
                 <div>
                   Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">Space</kbd> +{" "}
@@ -121,9 +123,9 @@ export const Terminal = () => {
         );
       case "explorer":
         return (
-          <div className="relative">
-            <img src={explorerImg} alt="FKvim Explorer" className="w-full rounded-lg" />
-            <div className="absolute bottom-4 left-4 right-4 bg-background/80 backdrop-blur-sm p-3 rounded-lg border border-terminal-border">
+          <div className="relative group h-full">
+            <img src={explorerImg} alt="FKvim Explorer" className="w-full h-full object-cover rounded-lg" />
+            <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground">
                 Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">Esc</kbd> to return to editor
               </div>
@@ -132,9 +134,9 @@ export const Terminal = () => {
         );
       case "finder":
         return (
-          <div className="relative">
-            <img src={finderImg} alt="FKvim Finder" className="w-full rounded-lg" />
-            <div className="absolute bottom-4 left-4 right-4 bg-background/80 backdrop-blur-sm p-3 rounded-lg border border-terminal-border">
+          <div className="relative group h-full">
+            <img src={finderImg} alt="FKvim Finder" className="w-full h-full object-cover rounded-lg" />
+            <div className="absolute bottom-4 left-4 right-4 bg-background/90 backdrop-blur-sm p-3 rounded-lg border border-terminal-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="text-sm font-mono text-muted-foreground">
                 Press <kbd className="px-2 py-1 bg-secondary rounded text-primary">Esc</kbd> to return to editor
               </div>
@@ -158,11 +160,14 @@ export const Terminal = () => {
           <div className="w-3 h-3 rounded-full bg-warning" />
           <div className="w-3 h-3 rounded-full bg-success" />
         </div>
-        <div className="flex-1 text-center text-sm font-mono text-muted-foreground">Terminal</div>
+        <div className="flex-1 flex justify-between items-center px-4">
+          <span className="text-sm font-mono text-muted-foreground">Terminal</span>
+          <span className="text-sm font-mono font-semibold bg-gradient-fkvim bg-clip-text text-transparent">FKvim</span>
+        </div>
       </div>
 
       {/* Terminal Content */}
-      <div className="p-6 min-h-[500px]">{renderContent()}</div>
+      <div className="p-6 min-h-[600px] flex flex-col">{renderContent()}</div>
     </div>
   );
 };
