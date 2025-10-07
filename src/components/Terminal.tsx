@@ -93,6 +93,7 @@ export const Terminal = () => {
             </div>
             <form onSubmit={handleSubmit} className="flex items-center gap-2 mt-6">
               <span className="text-success">→</span>
+              {showCursor && !input && <span className="w-2 h-4 bg-terminal-cursor animate-pulse" />}
               <input
                 ref={inputRef}
                 type="text"
@@ -102,7 +103,6 @@ export const Terminal = () => {
                 autoFocus
                 spellCheck={false}
               />
-              {showCursor && <span className="w-2 h-4 bg-terminal-cursor animate-pulse" />}
             </form>
           </div>
         );
@@ -110,8 +110,10 @@ export const Terminal = () => {
         return (
           <div className="space-y-4">
             <div className="text-terminal-text font-mono text-sm">
-              <div className="text-success">→</div>
-              <div className="mt-2 text-success">FKvim quit successfully</div>
+              <div className="flex items-center gap-2">
+                <span className="text-success">→</span>
+                <span className="text-success">FKvim quit successfully</span>
+              </div>
               <div className="mt-4">Welcome to FKvim Interactive Demo</div>
               <div className="mt-4 text-muted-foreground">
                 Type <span className="text-primary font-semibold">fkvim</span>,{" "}
@@ -121,6 +123,7 @@ export const Terminal = () => {
             </div>
             <form onSubmit={handleSubmit} className="flex items-center gap-2 mt-6">
               <span className="text-success">→</span>
+              {showCursor && !input && <span className="w-2 h-4 bg-terminal-cursor animate-pulse" />}
               <input
                 ref={inputRef}
                 type="text"
@@ -130,7 +133,6 @@ export const Terminal = () => {
                 autoFocus
                 spellCheck={false}
               />
-              {showCursor && <span className="w-2 h-4 bg-terminal-cursor animate-pulse" />}
             </form>
           </div>
         );
@@ -208,7 +210,7 @@ export const Terminal = () => {
         </div>
         <div className="flex-1 flex justify-between items-center px-4">
           <span className="text-sm font-mono text-muted-foreground">Terminal</span>
-          <span className="text-sm font-mono font-semibold bg-gradient-fkvim bg-clip-text text-transparent">FKvim</span>
+          <span className="text-sm font-mono font-semibold text-muted-foreground">FKvim</span>
         </div>
       </div>
 
