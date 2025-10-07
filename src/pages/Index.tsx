@@ -1,12 +1,60 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Navbar } from "@/components/Navbar";
+import { Terminal } from "@/components/Terminal";
+import { KeybindingsSection } from "@/components/KeybindingsSection";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gradient-hero">
+      <Navbar />
+      
+      <main className="container mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto space-y-12">
+          {/* Hero Section */}
+          <div className="text-center space-y-4">
+            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-fkvim bg-clip-text text-transparent">
+              Experience FKvim
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Try out the FKvim Neovim configuration interactively in your browser
+            </p>
+          </div>
+
+          {/* Terminal */}
+          <Terminal />
+
+          {/* Keybindings */}
+          <KeybindingsSection />
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-terminal-border py-8">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          <p>
+            Developed by{" "}
+            <a
+              href="https://github.com/TheFlashCodes"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Mayank Kumar Jha
+            </a>
+          </p>
+          <p className="mt-2">
+            Visit{" "}
+            <a
+              href="https://fkvim.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              fkvim.netlify.app
+            </a>{" "}
+            for documentation
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
