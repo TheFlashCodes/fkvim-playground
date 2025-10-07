@@ -73,10 +73,10 @@ export const Navbar = () => {
             {/* Search */}
             <button
               onClick={() => setCommandOpen(true)}
-              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary border border-terminal-border hover:bg-secondary/80 transition-colors group"
+              className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-lg bg-secondary border border-terminal-border hover:bg-secondary/80 transition-colors group min-w-[200px]"
             >
               <Search className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
-              <span className="text-xs text-muted-foreground">Search...</span>
+              <span className="text-xs text-muted-foreground flex-1 text-left">Search...</span>
               <kbd className="px-1.5 py-0.5 text-xs bg-background rounded text-muted-foreground font-mono border border-terminal-border">
                 {navigator.platform.includes("Mac") ? "⌘K" : "Ctrl+K"}
               </kbd>

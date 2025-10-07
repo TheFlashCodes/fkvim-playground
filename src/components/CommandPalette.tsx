@@ -86,7 +86,7 @@ export const CommandPalette = ({ open, onOpenChange }: CommandPaletteProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] p-0 gap-0 bg-card border-terminal-border">
+      <DialogContent className="max-w-2xl max-h-[80vh] p-0 gap-0 bg-card border-terminal-border [&>button]:hidden">
         <DialogTitle className="sr-only">Command Palette</DialogTitle>
         <div className="flex items-center gap-3 px-4 py-3 border-b border-terminal-border">
           <Search className="w-5 h-5 text-muted-foreground" />
